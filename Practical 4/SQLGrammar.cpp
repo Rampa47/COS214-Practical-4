@@ -99,13 +99,63 @@ std::string SQLGrammar::SQLQuery()
 
     std::string name = newData->makeQuery();
 
-    query = name.substr(0, 'e');
+    for(int i = 0; i < name.length(); i++)
+    {
+        if(name[i] == 'S')
+        {
+            for(int j = i; j < name.length(); j++)
+            {
+                fullQuery += name[j];
+            }
 
-    fullQuery = name.substr('S', '*');
-
-    finalQuery.append(query);
+            break;
+        }
+        else
+        {
+            query += name[i];
+        }
+    }
 
     finalQuery.append(fullQuery);
 
+    finalQuery.append(" ");
+
+    finalQuery.append(query);
+
     return finalQuery;
+}
+
+std::string SQLGrammar::QueryResults()
+{
+    int expression = 0;
+
+    std::string query = SQLQuery();
+
+    std::string select = "SELECT";
+
+    std::string groupBy = "GROUP_BY";
+
+    std::string statement = query.substr(0, ' ');
+
+    if(query == select)
+    {
+        expression = 1;
+    }
+    else if(query == groupBy)
+    {
+        expression = 2;
+    }
+
+    switch(expression) //Rememver that the cases are based on whether you are selecting a name or a group of names
+    {
+        case 1:
+
+        break;
+
+        case 2:
+        break;
+
+        default:
+        break;
+    }
 }
