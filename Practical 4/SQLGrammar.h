@@ -14,9 +14,10 @@ class SQLGrammar : public ORM
         ~SQLGrammar();
         // Special functions
         std::string SQLQuery();
-        std::string QueryResults();
+        std::string QueryResults(std::string query);
         void insertData(std::string name);
-        std::string debug();
+        std::string search(std::string name);
+        std::string print();
 
     private:
         std::string ** database;

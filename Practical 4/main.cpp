@@ -12,8 +12,6 @@ int main()
     sql.insertData("George");
     sql.insertData("Timothy");
 
-    std::cout << sql.debug() << std::endl;
-
     std::cout << sql.SQLQuery() << std::endl;
     
     return 0;

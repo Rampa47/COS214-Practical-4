@@ -53,13 +53,11 @@ void SQLGrammar::insertData(std::string name)
     }
 }
 
-std::string SQLGrammar::debug()
+std::string SQLGrammar::print()
 {
     std::string info = "";
 
     bool endOfList = false;
-
-    std::cout << "Here is the list of names in the database: " << std::endl;
 
     for(int i = 0; i < maxRows; i++)
     {
@@ -89,6 +87,38 @@ std::string SQLGrammar::debug()
     return info;
 }
 
+std::string SQLGrammar::search(std::string name)
+{
+    bool found = false;
+    int rowIndex = 0, colIndex = 0;
+
+    for(int i = 0; i < maxRows; i++)
+    {
+        for(int j = 0; j < maxCols; j++)
+        {
+            if(database[i][j] == name)
+            {
+                rowIndex = i;
+                colIndex = j;
+                found = true;
+                break;
+            }
+        }
+    }
+
+    if(found)
+    {
+        std::string item = database[rowIndex][colIndex];
+
+        return item;
+    }
+    else
+    {
+        return "Name not in database";
+    }
+}
+
+
 std::string SQLGrammar::SQLQuery()
 {
     std::string query;
@@ -101,7 +131,7 @@ std::string SQLGrammar::SQLQuery()
 
     for(int i = 0; i < name.length(); i++)
     {
-        if(name[i] == 'S')
+        if(name[i] == 'S' || name[i] == 'G')
         {
             for(int j = i; j < name.length(); j++)
             {
@@ -122,40 +152,95 @@ std::string SQLGrammar::SQLQuery()
 
     finalQuery.append(query);
 
-    return finalQuery;
+    std::cout << finalQuery << std::endl;
+
+    return QueryResults(finalQuery);
 }
 
-std::string SQLGrammar::QueryResults()
+std::string SQLGrammar::QueryResults(std::string query)
 {
     int expression = 0;
 
-    std::string query = SQLQuery();
-
     std::string select = "SELECT";
 
-    std::string groupBy = "GROUP_BY";
+    std::string groupBy = "GROUP BY";
 
-    std::string statement = query.substr(0, ' ');
+    size_t querySearch = query.find(select);
 
-    if(query == select)
+    size_t nameSearch = query.find(groupBy);
+
+    if(querySearch != std::string::npos)
     {
         expression = 1;
     }
-    else if(query == groupBy)
+    else if(nameSearch != std::string::npos)
     {
         expression = 2;
     }
 
-    switch(expression) //Rememver that the cases are based on whether you are selecting a name or a group of names
+    switch(expression) //Remember that the cases are based on whether you are selecting a name or a group of names
     {
         case 1:
+        {
+            char all = '*';
 
-        break;
+            size_t found = query.find(all);
+
+            std::string name = "name";
+
+            size_t items = query.find(name);
+
+            std::string object;
+
+            if(found != std::string::npos)
+            {
+                std::cout << "Here are all the names in the database: " << std::endl;
+
+                std::cout << print() << std::endl;   
+            }
+            else if(items != std::string::npos)
+            {
+                std::cout << "Please enter the name that you are looking for: ";
+                std::cin >> object;
+
+                return search(object);
+            }
+
+            break;
+        }
 
         case 2:
-        break;
+        {
+            std::string list = "";
 
-        default:
-        break;
+            char letter;
+
+            std::cout << "Please enter the first letter of the names you want to find: ";
+            std::cin >> letter;
+
+            for(int i = 0; i < maxRows; i++)
+            {
+                for(int j = 0; j < maxCols; j++)
+                {
+                    if(database[i][j][0] == letter)
+                    {
+                        list += database[i][j] + " ";
+                    }
+                }
+            }
+
+            if(list == "")
+            {
+                return "No names starting with the chosen letter are in the database.";
+            }
+            else
+            {
+                return list;
+            }
+
+            break;
+        }
     }
+
+    return "";
 }
